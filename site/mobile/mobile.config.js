@@ -172,5 +172,10 @@ export default {
       name: 'textarea',
       component: () => import('tdesign-mobile-react/textarea/_example/index.jsx'),
     },
+    {
+      title: 'DropdownMenu 下拉菜单',
+      name: 'dropdown-menu',
+      component: () => import('tdesign-mobile-react/dropdown-menu/_example/index.jsx'),
+    },
   ],
 };

@@ -52,12 +52,12 @@ export default {
       title: '导航',
       type: 'component',
       children: [
-        // {
-        //   title: 'DropdownMenu 下拉菜单',
-        //   name: 'dropdown-menu',
-        //   path: '/mobile-react/components/dropdown-menu',
-        //   component: () => import('tdesign-mobile-react/dropdown-menu/dropdown-menu.md'),
-        // },
+        {
+          title: 'DropdownMenu 下拉菜单',
+          name: 'dropdown-menu',
+          path: '/mobile-react/components/dropdown-menu',
+          component: () => import('tdesign-mobile-react/dropdown-menu/dropdown-menu.md'),
+        },
         // {
         //   title: 'Navbar 导航条',
         //   name: 'navbar',
