@@ -23,6 +23,28 @@ export default function () {
     value: `option_${i + 1}`,
   }));
 
+  const buildTree = (length) => {
+    const tree = [];
+    for (let i = 0; i < length; i++) {
+      const item = {
+        label: `选项 ${i + 1}`,
+        value: `options_${i}`,
+      };
+
+      const options = new Array(10).fill(null).map((_, index) => ({
+        label: `子选项 ${index + 1 + i}`,
+        value: `options_${i}_${index}`,
+      }));
+
+      item.options = options;
+
+      tree.push(item);
+    }
+    return tree;
+  };
+
+  const optionsT1 = buildTree(8);
+
   return (
     <div className="tdesign-mobile-demo">
       <TDemoHeader
@@ -32,36 +54,36 @@ export default function () {
       <TDemoBlock title="01 类型" summary="单选下拉菜单">
         <DropdownMenu activeColor="#450">
           <DropdownItem label="菜单" options={numberArr} />
-          <DropdownItem label="菜单" options={numberArrA} />
-          <DropdownItem label="最多" options={numberArrB} />
+          <DropdownItem label="菜单" options={optionsT1} optionsLayout="tree" optionsColumns={2} />
+          <DropdownItem label="最多" options={numberArrB} optionsLayout="tree" optionsColumns={3} />
         </DropdownMenu>
       </TDemoBlock>
       <TDemoBlock summary="多选下拉菜单">
         <DropdownMenu activeColor="#450">
           <DropdownItem label="菜单1" multiple options={numberArr} />
-          <DropdownItem label="菜单1" multiple={true} options={numberArrA} />
-          <DropdownItem label="最多1" multiple={true} options={numberArrB} />
+          <DropdownItem label="菜单1" multiple options={numberArrA} />
+          <DropdownItem label="最多1" multiple options={numberArrB} />
         </DropdownMenu>
       </TDemoBlock>
       <TDemoBlock summary="多选下拉菜单">
         <DropdownMenu activeColor="#450">
-          <DropdownItem label="菜单2" multiple={true} options={numberArr} />
-          <DropdownItem label="菜单2" multiple={true} options={numberArrA} />
-          <DropdownItem label="最多2" multiple={true} options={numberArrB} />
+          <DropdownItem label="菜单2" multiple options={numberArr} />
+          <DropdownItem label="菜单2" multiple options={numberArrA} />
+          <DropdownItem label="最多2" multiple options={numberArrB} />
         </DropdownMenu>
       </TDemoBlock>
       <TDemoBlock summary="多选下拉菜单">
         <DropdownMenu activeColor="#450">
-          <DropdownItem label="菜单3" multiple={true} options={numberArr} />
-          <DropdownItem label="菜单3" multiple={true} options={numberArrA} />
-          <DropdownItem label="最多3" multiple={true} options={numberArrB} />
+          <DropdownItem label="菜单3" multiple options={numberArr} />
+          <DropdownItem label="菜单3" multiple options={numberArrA} />
+          <DropdownItem label="最多3" multiple options={numberArrB} />
         </DropdownMenu>
       </TDemoBlock>
       <TDemoBlock summary="多选下拉菜单">
         <DropdownMenu activeColor="#450">
-          <DropdownItem label="菜单4" multiple={true} options={numberArr} />
-          <DropdownItem label="菜单4" multiple={true} options={numberArrA} />
-          <DropdownItem label="最多4" multiple={true} options={numberArrB} />
+          <DropdownItem label="菜单4" multiple options={numberArr} />
+          <DropdownItem label="菜单4" multiple options={numberArrA} />
+          <DropdownItem label="最多4" multiple options={numberArrB} />
         </DropdownMenu>
       </TDemoBlock>
     </div>
