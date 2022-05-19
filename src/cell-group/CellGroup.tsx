@@ -19,12 +19,14 @@ const CellGroup: React.FC<CellGroupProps> = (props) => {
   return withNativeProps(
     props,
     <div
-      className={classNames(`${name}`, `${name}__container`, {
+      className={classNames(`${name}`, {
         'border--top-bottom': bordered,
       })}
     >
-      {title && <div className={`${name}__title`}>{title}</div>}
-      <div className={`${name}-body`}>{children}</div>
+      <div className={`${name}__container`}>
+        {title && <div className={`${name}__title`}>{title}</div>}
+        {children}
+      </div>
     </div>,
   );
 };

@@ -58,18 +58,18 @@ const Cell: React.FC<CellProps> = (props) => {
         onClick({ e });
       }}
     >
-      {(leftIcon || image) && (
+      {leftIcon && <div className={`${name}__left-icon`}>{leftIcon}</div>}
+      {image && (
         <div className={`${name}__left-icon`}>
-          {leftIcon}
           {isString(image) ? <img src={image} className={`${name}__image`} /> : image}
         </div>
       )}
       <div className={`${name}__title`}>
         {title && (
-          <span>
+          <>
             {title}
             {required && <span className={`${name}--required`}>&nbsp;*</span>}
-          </span>
+          </>
         )}
         {description && <div className={`${name}__description`}>{description}</div>}
       </div>
