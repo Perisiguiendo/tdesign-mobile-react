@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Icon } from 'tdesign-icons-react';
-import { Radio, RadioGroup } from 'tdesign-mobile-react/radio';
+import { Radio, RadioGroup, CellGroup, Cell } from 'tdesign-mobile-react';
 
 export default function () {
   const [defaultValue, setDefaultValue] = useState('idx1');
@@ -8,8 +8,10 @@ export default function () {
   const ICON2 = <Icon className="t-icon" name="check-rectangle" />;
   return (
     <RadioGroup value={defaultValue} onChange={(value) => setDefaultValue(value)}>
-      <Radio value="idx1" label="单选" checked icon={[ICON1, ICON2]}></Radio>
-      <Radio value="idx2" label="单选" icon={[ICON1, ICON2]}></Radio>
+      <CellGroup>
+        <Cell title="单选" leftIcon={<Radio value="idx1" checked icon={[ICON1, ICON2]} />} />
+        <Cell title="单选" bordered={false} leftIcon={<Radio value="idx2" icon={[ICON1, ICON2]} />} />
+      </CellGroup>
     </RadioGroup>
   );
 }

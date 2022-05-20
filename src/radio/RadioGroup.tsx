@@ -1,12 +1,12 @@
-import React, { FC, ReactNode, useRef } from 'react';
+import React, { FC, useRef } from 'react';
 import useConfig from '../_util/useConfig';
 import Radio, { RadioContext, RadioContextValue, RadioProps } from './Radio';
 import { TdRadioGroupProps } from './type';
 import useDefault from '../_util/useDefault';
+import withNativeProps, { NativeProps } from '../_util/withNativeProps';
+import { radioGroupDefaultProps } from './defaultProps';
 
-export interface RadioGroupProps extends TdRadioGroupProps {
-  children?: ReactNode;
-}
+export interface RadioGroupProps extends TdRadioGroupProps, NativeProps {}
 
 const RadioGroup: FC<RadioGroupProps> = (props) => {
   const { classPrefix } = useConfig();
@@ -15,26 +15,21 @@ const RadioGroup: FC<RadioGroupProps> = (props) => {
   const [internalValue, setInternalValue] = useDefault(value, defaultValue, onChange);
 
   const context: RadioContextValue = {
-    inject: (radioProps: RadioProps) => {
-      if (typeof radioProps.checked !== 'undefined') {
-        return radioProps;
-      }
-      return {
-        ...radioProps,
-        checked:
-          typeof internalValue !== 'undefined' &&
-          typeof radioProps.value !== 'undefined' &&
-          internalValue === radioProps.value,
-        disabled: radioProps.disabled || disabled,
-        onChange: (checked, { e }) => {
-          if (typeof radioProps.onChange === 'function') {
-            radioProps.onChange(checked, { e });
-          }
-          // @ts-ignore
-          setInternalValue(radioProps.value, { e });
-        },
-      };
-    },
+    inject: (radioProps: RadioProps) => ({
+      ...radioProps,
+      checked:
+        typeof internalValue !== 'undefined' &&
+        typeof radioProps.value !== 'undefined' &&
+        internalValue === radioProps.value,
+      disabled: radioProps.disabled || disabled,
+      onChange: (checked, { e }) => {
+        if (typeof radioProps.onChange === 'function') {
+          radioProps.onChange(checked, { e });
+        }
+        // @ts-ignore
+        setInternalValue(radioProps.value, { e });
+      },
+    }),
   };
 
   const renderOptions = () =>
@@ -52,16 +47,15 @@ const RadioGroup: FC<RadioGroupProps> = (props) => {
         </Radio>
       );
     });
-  return (
+  return withNativeProps(
+    props,
     <div ref={groupRef} className={`${classPrefix}-radio-group`}>
-      <div className={`${classPrefix}-cell-group`}>
-        <div className={`${classPrefix}cell-group__container`}>
-          <RadioContext.Provider value={context}>{options?.length ? renderOptions() : children}</RadioContext.Provider>
-        </div>
-      </div>
-    </div>
+      <RadioContext.Provider value={context}>{options?.length ? renderOptions() : children}</RadioContext.Provider>
+    </div>,
   );
 };
 
+RadioGroup.defaultProps = radioGroupDefaultProps;
 RadioGroup.displayName = 'RadioGroup';
+
 export default RadioGroup;
