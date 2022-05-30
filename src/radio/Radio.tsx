@@ -137,15 +137,17 @@ const Radio = forwardRef((_props: RadioProps, ref: Ref<HTMLDivElement>) => {
             {renderIcon()}
           </span>
         )}
-        {(label || content) && (
+        {(label || content || children) && (
           <div className={`${radioName}__label-wrap`}>
-            <span
-              className={`${radioName}content-title`}
-              style={labelStyle}
-              onClick={() => switchRadioChecked('content')}
-            >
-              {label}
-            </span>
+            {label && (
+              <span
+                className={`${radioName}content-title`}
+                style={labelStyle}
+                onClick={() => switchRadioChecked('content')}
+              >
+                {label}
+              </span>
+            )}
             {(content || children) && (
               <div
                 className={`${radioName}__content-inner`}
