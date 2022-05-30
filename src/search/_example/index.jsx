@@ -6,7 +6,7 @@ import StateDemo from './state';
 import TDemoBlock from '../../../site/mobile/components/DemoBlock';
 import TDemoHeader from '../../../site/mobile/components/DemoHeader';
 
-export default function RadioDemo() {
+export default function SearchDemo() {
   return (
     <div className="tdesign-mobile-demo">
       <TDemoHeader title="Search 搜索框" summary="用于用户输入搜索信息，并进行页面内容搜索" />

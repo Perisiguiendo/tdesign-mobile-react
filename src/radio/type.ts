@@ -20,10 +20,12 @@ export interface TdRadioProps {
   allowUncheck?: boolean;
   /**
    * 是否选中
+   * @default false
    */
   checked?: boolean;
   /**
    * 是否选中，非受控属性
+   * @default false
    */
   defaultChecked?: boolean;
   /**
@@ -36,6 +38,7 @@ export interface TdRadioProps {
   content?: TNode;
   /**
    * 是否禁用组件内容（content）触发选中
+   * @default false
    */
   contentDisabled?: boolean;
   /**
@@ -68,6 +71,7 @@ export interface TdRadioProps {
   name?: string;
   /**
    * 单选按钮的值
+   * @default false
    */
   value?: RadioValue;
   /**
@@ -92,10 +96,12 @@ export interface TdRadioGroupProps {
   options?: Array<RadioOption>;
   /**
    * 选中的值
+   * @default false
    */
   value?: RadioValue;
   /**
    * 选中的值，非受控属性
+   * @default false
    */
   defaultValue?: RadioValue;
   /**
@@ -108,4 +114,8 @@ export type RadioValue = string | number | boolean;
 
 export type RadioOption = string | number | RadioOptionObj;
 
-export interface RadioOptionObj { label?: string | TNode; value?: string | number; disabled?: boolean };
+export interface RadioOptionObj {
+  label?: string | TNode;
+  value?: string | number;
+  disabled?: boolean;
+}

@@ -1,19 +1,23 @@
 import React, { useState } from 'react';
-import { Radio, RadioGroup } from 'tdesign-mobile-react/radio';
+import { Radio, RadioGroup, Cell, CellGroup } from 'tdesign-mobile-react';
 
 export default function () {
-  const [defaultVaule, setDefaultValue] = useState('idx1');
+  const [defaultValue, setDefaultValue] = useState('idx1');
   return (
-    <RadioGroup value={defaultVaule} onChange={setDefaultValue}>
-      <Radio label="单选" align="right" value="idx1"></Radio>
-      <Radio
-        label="单选单选单选单选单选单选单选单选单选单选单选单选单选单选单选单选单选单选"
-        align="right"
-        value="idx2"
-      ></Radio>
-      <Radio label="单选" align="right" value="idx3">
-        单选单选单选单选单选单选单选单选单选单选单选单选单选单选单选单选单选单选单选单选单选
-      </Radio>
+    <RadioGroup value={defaultValue} onChange={setDefaultValue}>
+      <CellGroup>
+        <Cell title="单选" rightIcon={<Radio align="right" value="idx1" />} />
+        <Cell
+          title="单选单选单选单选单选单选单选单选单选单选单选单选单选单选单选单选单选单选"
+          rightIcon={<Radio align="right" value="idx2" />}
+        />
+        <Cell
+          title="单选"
+          description="单选单选单选单选单选单选单选单选单选单选单选单选单选单选单选单选单选单选单选单选单选"
+          rightIcon={<Radio align="right" value="idx3" />}
+          bordered={false}
+        />
+      </CellGroup>
     </RadioGroup>
   );
 }

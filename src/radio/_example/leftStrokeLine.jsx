@@ -1,20 +1,24 @@
 import React, { useState } from 'react';
-import { Radio, RadioGroup } from 'tdesign-mobile-react/radio';
+import { Radio, RadioGroup, Cell, CellGroup } from 'tdesign-mobile-react';
 
 export default function Base() {
-  const [defaultVaule, setDefaultValue] = useState('idx1');
+  const [defaultValue, setDefaultValue] = useState('idx1');
   return (
     <>
-      <RadioGroup value={defaultVaule} onChange={(value) => setDefaultValue(value)}>
-        <Radio value="idx1" label="单选" icon="stroke-line"></Radio>
-        <Radio
-          value="idx2"
-          label="单选单选单选单选单选单选单选单选单选单选单选单选单选单选单选单选单选单选"
-          icon="stroke-line"
-        ></Radio>
-        <Radio label="单选" icon="stroke-line" value="idx3">
-          单选单选单选单选单选单选单选单选单选单选单选单选单选单选单选单选单选单选单选单选单选
-        </Radio>
+      <RadioGroup value={defaultValue} onChange={(value) => setDefaultValue(value)}>
+        <CellGroup>
+          <Cell title="单选" leftIcon={<Radio value="idx1" icon="stroke-line" />} />
+          <Cell
+            title="单选单选单选单选单选单选单选单选单选单选单选单选单选单选单选单选单选单选"
+            leftIcon={<Radio value="idx2" icon="stroke-line" />}
+          />
+          <Cell
+            title="单选"
+            description="单选单选单选单选单选单选单选单选单选单选单选单选单选单选单选单选单选单选单选单选单选"
+            leftIcon={<Radio value="idx3" icon="stroke-line" />}
+            bordered={false}
+          />
+        </CellGroup>
       </RadioGroup>
     </>
   );
