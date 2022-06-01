@@ -17,6 +17,7 @@ export interface DropdownItemProps extends TdDropdownItemProps, NativeProps {
 const DropdownItem: React.FC<DropdownItemProps> = (props) => {
   const { show, multiple, disabled, optionsColumns, options, defaultValue, value, onChange, duration, optionsLayout } =
     props;
+  console.log('multiple: ', multiple);
 
   console.log('options: ', options);
   const { classPrefix } = useConfig();
@@ -40,11 +41,11 @@ const DropdownItem: React.FC<DropdownItemProps> = (props) => {
     </RadioGroup>
   );
 
-  const checkboxContent = (optsArray: any) => (
+  const checkboxContent = (
     <Checkbox.Group>
-      {optsArray.map((item, index) => (
+      {options.map((item, index) => (
         <div className={`${name}__cell`} key={index}>
-          <Checkbox value={item.value}>{item.label}</Checkbox>
+          <Checkbox value={item.value} content={item.label} />
         </div>
       ))}
     </Checkbox.Group>
