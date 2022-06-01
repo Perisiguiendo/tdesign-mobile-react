@@ -1,10 +1,10 @@
 import React from 'react';
-import { Checkbox } from 'tdesign-mobile-react/checkbox';
+import { Checkbox, CellGroup, Cell } from 'tdesign-mobile-react';
 
 export default function () {
   return (
-    <>
-      <Checkbox label="多选" indeterminate defaultChecked />
-    </>
+    <CellGroup>
+      <Cell leftIcon={<Checkbox indeterminate defaultChecked />} title="多选" />
+    </CellGroup>
   );
 }

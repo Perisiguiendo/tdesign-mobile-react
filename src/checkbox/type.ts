@@ -118,15 +118,25 @@ export interface TdCheckboxGroupProps {
    */
   defaultValue?: CheckboxGroupValue;
   /**
-   * 值变化时触发，`context.current` 表示当前变化的数据项，如果是全选则为空；`context.type` 表示引起选中数据变化的是选中或是取消选中
+   * 值变化时触发，`context.current` 表示当前变化的数据值，如果是全选则为空；`context.type` 表示引起选中数据变化的是选中或是取消选中；`context.option` 表示当前变化的数据项
    */
   onChange?: (value: CheckboxGroupValue, context: CheckboxGroupChangeContext) => void;
 }
 
 export type CheckboxOption = string | number | CheckboxOptionObj;
 
-export interface CheckboxOptionObj { label?: string | TNode; value?: string | number; disabled?: boolean; name?: string; checkAll?: true };
+export interface CheckboxOptionObj {
+  label?: string | TNode;
+  value?: string | number;
+  disabled?: boolean;
+  name?: string;
+  checkAll?: true;
+}
 
 export type CheckboxGroupValue = Array<string | number>;
 
-export interface CheckboxGroupChangeContext { e: ChangeEvent<HTMLDivElement>; current: CheckboxOption | TdCheckboxProps; type: 'check' | 'uncheck' };
+export interface CheckboxGroupChangeContext {
+  e: ChangeEvent<HTMLDivElement>;
+  current: CheckboxOption | TdCheckboxProps;
+  type: 'check' | 'uncheck';
+}

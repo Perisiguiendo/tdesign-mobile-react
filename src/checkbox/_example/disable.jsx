@@ -1,13 +1,18 @@
 import React from 'react';
-import { Checkbox } from 'tdesign-mobile-react/checkbox';
+import { Checkbox, CellGroup, Cell } from 'tdesign-mobile-react';
 
 export default function () {
   return (
-    <>
-      <Checkbox label="多选" disabled/>
-      <Checkbox label="多选" checked disabled/>
-      <Checkbox label="多选" align="right" disabled/>
-      <Checkbox label="多选" align="right" checked disabled/>
-    </>
+    <CellGroup>
+      <Cell leftIcon={<Checkbox disabled />} title="多选" />
+      <Cell leftIcon={<Checkbox checked disabled />} title="多选" />
+      <Cell rightIcon={<Checkbox disabled />} title="多选" />
+      <Cell rightIcon={<Checkbox checked disabled />} title="多选" />
+      <Cell
+        leftIcon={<Checkbox disabled />}
+        title="多选"
+        description="多选多选多选多选多选多选多选多选多选多选多选多选多选多选多选多选多选多选多选多选多选多选多选多选多选多选多选多选多选多选多选多选"
+      />
+    </CellGroup>
   );
 }
