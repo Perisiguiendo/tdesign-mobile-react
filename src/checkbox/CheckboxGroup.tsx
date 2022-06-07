@@ -1,15 +1,14 @@
 import React, { ReactElement, useEffect, useMemo, useState } from 'react';
 import isNumber from 'lodash/isNumber';
-import classNames from 'classnames';
 import { CheckboxOption, CheckboxOptionObj, TdCheckboxGroupProps } from './type';
-import { StyledProps } from '../common';
 import useConfig from '../_util/useConfig';
 import useDefault from '../_util/useDefault';
 import Checkbox, { CheckContext, CheckContextValue } from './Checkbox';
+import withNativeProps, { NativeProps } from '../_util/withNativeProps';
+import { checkboxGroupDefaultProps } from './defaultProps';
+import { Cell } from '../cell';
 
-export interface CheckboxGroupProps extends TdCheckboxGroupProps, StyledProps {
-  children?: React.ReactNode;
-}
+export interface CheckboxGroupProps extends TdCheckboxGroupProps, NativeProps {}
 
 // 将 checkBox 的 value 转换为 string|number
 const getCheckboxValue = (v: CheckboxOption): string | number => {
@@ -25,20 +24,9 @@ const getCheckboxValue = (v: CheckboxOption): string | number => {
   }
 };
 
-export function CheckboxGroup(props: CheckboxGroupProps) {
+export const CheckboxGroup: React.FC<CheckboxGroupProps> = (props) => {
   const { classPrefix } = useConfig();
-  const { 
-    value, 
-    defaultValue, 
-    disabled, 
-    className, 
-    max, 
-    options = [], 
-    name,
-    style,
-    children, 
-    onChange, 
-  } = props;
+  const { value, defaultValue, disabled, max, options = [], name, onChange, children } = props;
 
   const internalOptions =
     Array.isArray(options) && options.length > 0
@@ -123,41 +111,46 @@ export function CheckboxGroup(props: CheckboxGroupProps) {
   // options 和 children 的抉择,在未明确说明时，暂时以 options 优先
   const useOptions = Array.isArray(options) && options.length !== 0;
 
-  return (
-    <div className={classNames(`${classPrefix}-checkbox-group`, className)} style={style}>
-      <div className={`${classPrefix}-cell-group`}>
-        <div className={`${classPrefix}cell-group__container`}>
-          <CheckContext.Provider value={context}>
-            {useOptions
-              ? options.map((v, index) => {
-                const type = typeof v;
-                switch (type) {
-                  case 'number' || 'string': {
-                    const vs = v as number | string;
-                    return (
-                      <Checkbox key={vs} label={vs} value={vs}>
-                        {v}
-                      </Checkbox>
-                    );
-                  }
-                  case 'object': {
-                    const vs = v as CheckboxOptionObj;
-                    // CheckAll 的 checkBox 不存在 value,故用 checkAll_index 来保证尽量不和用户的 value 冲突.
-                    return vs.checkAll ? (
-                      <Checkbox {...v} key={`checkAll_${index}`} indeterminate={indeterminate} />
-                    ) : (
-                      <Checkbox {...v} key={vs.value} disabled={vs.disabled || disabled} />
-                    );
-                  }
-                  default:
-                    return null;
+  return withNativeProps(
+    props,
+    <div className={`${classPrefix}-checkbox-group`}>
+      <CheckContext.Provider value={context}>
+        {useOptions
+          ? options.map((v, index) => {
+              const type = typeof v;
+              switch (type) {
+                case 'number' || 'string': {
+                  const vs = v as number | string;
+                  return <Cell key={vs} leftIcon={<Checkbox value={vs} />} title={vs} />;
                 }
-              })
-              : children}
-          </CheckContext.Provider>
-        </div>
-      </div>
-    </div>
-  )
-}
+                case 'object': {
+                  const { label, ...vs } = v as CheckboxOptionObj;
+                  // CheckAll 的 checkBox 不存在 value,故用 checkAll_index 来保证尽量不和用户的 value 冲突.
+                  return vs.checkAll ? (
+                    <Cell
+                      key={`checkAll_${index}`}
+                      title={label}
+                      leftIcon={<Checkbox {...vs} indeterminate={indeterminate} />}
+                    />
+                  ) : (
+                    <Cell
+                      key={vs.value}
+                      title={label}
+                      leftIcon={<Checkbox {...vs} disabled={vs.disabled || disabled} />}
+                    />
+                  );
+                }
+                default:
+                  return null;
+              }
+            })
+          : children}
+      </CheckContext.Provider>
+    </div>,
+  );
+};
+
+CheckboxGroup.defaultProps = checkboxGroupDefaultProps;
+CheckboxGroup.displayName = 'CheckboxGroup';
+
 export default CheckboxGroup;
