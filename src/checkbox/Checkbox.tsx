@@ -35,9 +35,10 @@ const Checkbox = forwardRef((_props: CheckProps, ref: Ref<HTMLInputElement>) => 
   const context = useContext(CheckContext);
   const props = context ? context.inject(_props) : _props;
   const { classPrefix } = useConfig();
+  const prefixName = `${classPrefix}-checkbox`;
   const {
     name,
-    align = 'left',
+    align,
     content,
     children,
     disabled,
@@ -45,11 +46,11 @@ const Checkbox = forwardRef((_props: CheckProps, ref: Ref<HTMLInputElement>) => 
     label,
     onChange,
     checked,
-    defaultChecked = false,
+    defaultChecked,
     readonly,
     value,
-    maxLabelRow = 3,
-    maxContentRow = 5,
+    maxLabelRow,
+    maxContentRow,
     icon,
     contentDisabled,
   } = props;
@@ -57,7 +58,7 @@ const Checkbox = forwardRef((_props: CheckProps, ref: Ref<HTMLInputElement>) => 
   const alignStyle: CSSProperties = {
     flexDirection: align === ALIGN.LEFT ? 'row' : 'row-reverse',
   };
-  const checkboxClassName = classNames(`${classPrefix}-checkbox`, {
+  const checkboxClassName = classNames(`${prefixName}`, {
     [`${classPrefix}-is-checked`]: internalChecked,
     [`${classPrefix}-is-disabled`]: disabled,
   });
@@ -81,7 +82,7 @@ const Checkbox = forwardRef((_props: CheckProps, ref: Ref<HTMLInputElement>) => 
       <Icon
         name={iconName}
         className={classNames(`${classPrefix}-icon`, {
-          [`${classPrefix}-checkbox__checked__disable-icon`]: disabled || !internalChecked,
+          [`${prefixName}__checked__disable-icon`]: disabled || !internalChecked,
         })}
       />
     );
@@ -99,15 +100,15 @@ const Checkbox = forwardRef((_props: CheckProps, ref: Ref<HTMLInputElement>) => 
     props,
     <label style={alignStyle} onClick={handleClick}>
       <div className={checkboxClassName}>
-        <div className={`${classPrefix}-checkbox__content-wrap`}>
-          <span className={`${classPrefix}-checkbox__icon-left`}>
+        <div className={`${prefixName}__content-wrap`}>
+          <span className={`${prefixName}__icon-left`}>
             <input
               readOnly={readonly}
               value={value}
               ref={ref}
               type="checkbox"
               name={name}
-              className={`${classPrefix}-checkbox__original-left`}
+              className={`${prefixName}__original-left`}
               disabled={disabled}
               checked={internalChecked}
               onClick={(e) => e.stopPropagation()}
@@ -117,13 +118,12 @@ const Checkbox = forwardRef((_props: CheckProps, ref: Ref<HTMLInputElement>) => 
             />
             {renderIcon()}
           </span>
-          <span className={`${classPrefix}-checkbox__label-wrap`}></span>
-        </div>
-      </div>
-      <div className={`${classPrefix}-cell__title`}>
-        <span style={labelStyle}>{label}</span>
-        <div className={`${classPrefix}-cell__description`} style={getLimitRowStyle(maxContentRow)}>
-          {children || content}
+          <span className={`${prefixName}__label`}>
+            <span style={labelStyle}>{label}</span>
+            <div className={`${classPrefix}-cell__description`} style={getLimitRowStyle(maxContentRow)}>
+              {children || content}
+            </div>
+          </span>
         </div>
       </div>
     </label>,
