@@ -120,9 +120,11 @@ const Checkbox = forwardRef((_props: CheckProps, ref: Ref<HTMLInputElement>) => 
           </span>
           <span className={`${prefixName}__label`}>
             <span style={labelStyle}>{label}</span>
-            <div className={`${classPrefix}-cell__description`} style={getLimitRowStyle(maxContentRow)}>
-              {children || content}
-            </div>
+            {(children || content) && (
+              <div className={`${classPrefix}-cell__description`} style={getLimitRowStyle(maxContentRow)}>
+                {children || content}
+              </div>
+            )}
           </span>
         </div>
       </div>
