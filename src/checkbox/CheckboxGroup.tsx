@@ -6,6 +6,7 @@ import useDefault from '../_util/useDefault';
 import Checkbox, { CheckContext, CheckContextValue } from './Checkbox';
 import withNativeProps, { NativeProps } from '../_util/withNativeProps';
 import { checkboxGroupDefaultProps } from './defaultProps';
+import { Cell } from '../cell';
 
 export interface CheckboxGroupProps extends TdCheckboxGroupProps, NativeProps {}
 
@@ -120,19 +121,23 @@ export const CheckboxGroup: React.FC<CheckboxGroupProps> = (props) => {
               switch (type) {
                 case 'number' || 'string': {
                   const vs = v as number | string;
-                  return (
-                    <Checkbox key={vs} label={vs} value={vs}>
-                      {v}
-                    </Checkbox>
-                  );
+                  return <Cell key={vs} leftIcon={<Checkbox value={vs} />} title={vs} />;
                 }
                 case 'object': {
-                  const vs = v as CheckboxOptionObj;
+                  const { label, ...vs } = v as CheckboxOptionObj;
                   // CheckAll 的 checkBox 不存在 value,故用 checkAll_index 来保证尽量不和用户的 value 冲突.
                   return vs.checkAll ? (
-                    <Checkbox {...v} key={`checkAll_${index}`} indeterminate={indeterminate} />
+                    <Cell
+                      key={`checkAll_${index}`}
+                      title={label}
+                      leftIcon={<Checkbox {...vs} indeterminate={indeterminate} />}
+                    />
                   ) : (
-                    <Checkbox {...v} key={vs.value} disabled={vs.disabled || disabled} />
+                    <Cell
+                      key={vs.value}
+                      title={label}
+                      leftIcon={<Checkbox {...vs} disabled={vs.disabled || disabled} />}
+                    />
                   );
                 }
                 default:
