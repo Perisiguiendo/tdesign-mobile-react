@@ -1,105 +1,245 @@
-import React, { memo, useRef, useState, useCallback, useMemo } from 'react';
-import { CSSTransition } from 'react-transition-group';
+import React, { memo, useMemo, useState, useCallback, useEffect } from 'react';
 import classnames from 'classnames';
 import { RadioGroup, Radio, Checkbox, Button } from 'tdesign-mobile-react';
+import isArray from 'lodash/isArray';
+import isString from 'lodash/isString';
+import isNumber from 'lodash/isNumber';
 import withNativeProps, { NativeProps } from '../_util/withNativeProps';
-import { TdDropdownItemProps } from './type';
+import { TdDropdownItemOptionValueType, TdDropdownItemProps } from './type';
 import { dropdownItemDefaultProps } from './defaultProps';
 import useConfig from '../_util/useConfig';
-import usePopupCssTransition from './hooks/usePopupCssTransition';
-// import { formatChecker } from './formatChecker';
 
 export interface DropdownItemProps extends TdDropdownItemProps, NativeProps {
-  show: boolean;
-  duration: number;
+  hide: () => void;
+  clearIndex: React.Dispatch<React.SetStateAction<number>>;
 }
 
 const DropdownItem: React.FC<DropdownItemProps> = (props) => {
-  const { show, multiple, disabled, optionsColumns, options, defaultValue, value, onChange, duration, optionsLayout } =
-    props;
-  console.log('multiple: ', multiple);
+  const {
+    multiple,
+    disabled,
+    optionsColumns,
+    options,
+    defaultValue,
+    optionsLayout,
+    value,
+    onChange,
+    hide,
+    clearIndex,
+  } = props;
 
-  console.log('options: ', options);
+  const [isTreeLayout] = useState(optionsLayout === 'tree');
+
   const { classPrefix } = useConfig();
   const name = `${classPrefix}-dropdown-item`;
 
   const columns = new Array(optionsColumns || 1).fill(0);
 
-  const contentRef = useRef<HTMLDivElement>(null);
-
-  const cssTransitionState = usePopupCssTransition({ contentRef });
-
-  const [isTreeLayout] = useState(optionsLayout === 'tree');
-
-  const radioGroupContent = (
-    <RadioGroup>
-      {options.map((item, index) => (
-        <div className={`${name}__cell`} key={index}>
-          <Radio value={item.value}>{item.label}</Radio>
-        </div>
-      ))}
-    </RadioGroup>
+  const dropdownItemClassName = useMemo(
+    () =>
+      classnames(
+        `${name}__content`,
+        {
+          [`${classPrefix}-is-tree`]: isTreeLayout,
+        },
+        [`${classPrefix}-is-col${optionsColumns}`],
+        {
+          [`${classPrefix}-is-single`]: !multiple,
+          [`${classPrefix}-is-disabled`]: disabled,
+          [`${classPrefix}-is-multi`]: multiple,
+        },
+      ),
+    [name, classPrefix, isTreeLayout, optionsColumns, multiple, disabled],
   );
 
+  const defaultRadioValue = useMemo(() => {
+    if (!defaultValue) {
+      return [];
+    }
+    if (isArray(defaultValue)) {
+      return defaultValue;
+    }
+    if (isString(defaultValue) || isNumber(defaultValue)) {
+      return [defaultValue];
+    }
+  }, [defaultValue]);
+
+  const [tempRadioValue, setTempRadioValue] = useState<TdDropdownItemOptionValueType[]>(defaultRadioValue);
+  const [tempCheckboxValue, setTempCheckboxValue] = useState<TdDropdownItemOptionValueType[]>(defaultRadioValue);
+
+  useEffect(() => {
+    console.log('tempRadioValue', tempRadioValue);
+    if (onChange) {
+      onChange(tempRadioValue);
+    }
+  }, [tempRadioValue]);
+
+  /**
+   * 确定按钮disabled
+   */
+  const optDisabled = useMemo(() => {
+    if (!multiple) {
+      if (optionsColumns === 2 && tempRadioValue.filter((v) => v).length === 2) {
+        return false;
+      }
+      if (optionsColumns === 3 && tempRadioValue.filter((v) => v).length === 3) {
+        return false;
+      }
+      return true;
+    }
+    return !tempRadioValue.length;
+  }, [optionsColumns, tempRadioValue, multiple]);
+
+  /**
+   * 子节点
+   * @description 根据父节点的值，渲染子节点
+   */
+  const childLeafs = useMemo(
+    () => (optionsColumns !== 1 ? options?.filter((v) => v.value === tempRadioValue[0])?.[0]?.options : []),
+    [options, tempRadioValue, optionsColumns],
+  );
+
+  /**
+   * 孙子节点
+   * @description 根据子节点的值，渲染孙子节点
+   */
+  const grandsonLeafs = useMemo(
+    () => (optionsColumns === 3 ? childLeafs?.filter((v) => v.value === tempRadioValue[1])?.[0]?.options : []),
+    [childLeafs, tempRadioValue, optionsColumns],
+  );
+
+  /**
+   * @param value
+   * @param index
+   * @description 单选点击内容，更新状态
+   */
+  const radioChange = (value, index) => {
+    console.log('index: ', index);
+    console.log('value: ', value);
+
+    const newValue =
+      // eslint-disable-next-line no-nested-ternary
+      index === 0
+        ? [value, null, null]
+        : index === 1
+        ? [tempRadioValue?.[0] || options[0]?.value, value, null]
+        : [tempRadioValue?.[0] || options[0]?.value, tempRadioValue?.[1] || options[0]?.options[0]?.value, value];
+    setTempRadioValue([...newValue.map((v) => v)]);
+
+    // if (!multiple && optionsLayout !== 'tree') {
+    //   hide();
+    // }
+  };
+
+  /**
+   * @param value
+   * @description 多选点击内容，更新状态
+   */
+  const checkboxChange = (value) => setTempCheckboxValue(value);
+
+  /**
+   * @param value
+   * @description 单选内容value
+   */
+  const radioSingleValue = useCallback((index: number) => tempRadioValue?.[index] || null, [tempRadioValue]);
+
+  /**
+   * @param value
+   * @description 单选内容节点
+   */
+  const radioContent = useCallback(
+    (index: number) => {
+      switch (index) {
+        case 0: // fatherLeafs
+          return options;
+        case 1: // childLeafs
+          return tempRadioValue[0] ? childLeafs : options[0]?.options || [];
+        case 2: // grandsonLeafs
+          return tempRadioValue[1] ? grandsonLeafs : options[0]?.options[0]?.options || [];
+        default:
+          return [];
+      }
+    },
+    [options, tempRadioValue, childLeafs, grandsonLeafs],
+  );
+
+  const radioGroupContent = useCallback(
+    (index) => (
+      <RadioGroup
+        defaultValue={defaultValue as TdDropdownItemOptionValueType}
+        value={radioSingleValue(index)}
+        onChange={(value) => radioChange(value, index)}
+      >
+        {(radioContent(index) || []).map((item, index) => (
+          <div className={`${name}__cell`} key={index}>
+            <Radio value={item.value}>{item.label}</Radio>
+          </div>
+        ))}
+      </RadioGroup>
+    ),
+    [defaultValue, radioSingleValue, radioContent, name],
+  );
+  console.log('defaultValue: ', defaultValue);
+
+  /**
+   * @param value
+   * @description 多选内容节点
+   */
   const checkboxContent = (
-    <Checkbox.Group>
+    <Checkbox.Group defaultValue={tempCheckboxValue as TdDropdownItemOptionValueType[]} onChange={checkboxChange}>
       {options.map((item, index) => (
         <div className={`${name}__cell`} key={index}>
-          <Checkbox value={item.value} content={item.label} />
+          <Checkbox value={item.value} label={item.label} />
         </div>
       ))}
     </Checkbox.Group>
   );
 
-  const fatherItems = useMemo(() => {
-    if (multiple && isTreeLayout) {
-      return options.map((item) => ({
-        value: item.value,
-        label: item.label,
-      }));
-    }
-    return [];
-  }, [multiple, isTreeLayout, options]);
+  /**
+   * 确定
+   */
+  const handleConfirm = () => {
+    console.log('confirm');
+    hide();
+    clearIndex(null);
+  };
+
+  /**
+   * 重置
+   */
+  const handleReset = () => {
+    setTempRadioValue([]);
+  };
 
   return withNativeProps(
     props,
-    <CSSTransition in={show} timeout={duration} appear {...cssTransitionState.props}>
-      <div
-        className={classnames(
-          `${name}__content`,
-          {
-            [`${classPrefix}-is-tree`]: isTreeLayout,
-          },
-          [`${classPrefix}-is-col${optionsColumns}`],
-          {
-            [`${classPrefix}-is-single`]: !multiple,
-            [`${classPrefix}-is-disabled`]: disabled,
-            [`${classPrefix}-is-multi`]: multiple,
-          },
-        )}
-      >
-        <div className={`${name}__bd`}>
-          {!isTreeLayout && <>{multiple ? checkboxContent : radioGroupContent}</>}
-          {isTreeLayout && (
-            <>
-              {columns.map((item, index) => (
-                <div key={index} className={`${name}__tree-group`}>
-                  {multiple ? checkboxContent : radioGroupContent}
-                </div>
-              ))}
-            </>
-          )}
-        </div>
-        {(multiple || optionsLayout === 'tree') && (
-          <div className={`${name}__ft`}>
-            <Button type="reset" variant="outline">
-              重置
-            </Button>
-            <Button theme="primary">确定</Button>
-          </div>
+    <div
+      // style={listSpring}
+      className={dropdownItemClassName}
+    >
+      <div className={`${name}__bd`}>
+        {!isTreeLayout && <>{multiple ? checkboxContent : radioGroupContent(0)}</>}
+        {isTreeLayout && (
+          <>
+            {columns.map((item, index) => (
+              <div key={index} className={`${name}__tree-group`}>
+                {multiple ? checkboxContent : radioGroupContent(index)}
+              </div>
+            ))}
+          </>
         )}
       </div>
-    </CSSTransition>,
+      {(multiple || optionsLayout === 'tree') && (
+        <div className={`${name}__ft`}>
+          <Button type="reset" variant="outline" onClick={handleReset}>
+            重置
+          </Button>
+          <Button theme="primary" disabled={optDisabled} onClick={handleConfirm}>
+            确定
+          </Button>
+        </div>
+      )}
+    </div>,
   );
 };
 
