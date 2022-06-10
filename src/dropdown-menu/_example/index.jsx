@@ -5,12 +5,15 @@ import TDemoHeader from '../../../site/mobile/components/DemoHeader';
 
 import './style/index.less';
 
+const numToWord = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];
+
 export default function () {
-  const emptyArr = new Array(20).fill(null);
+  const emptyArr = new Array(5).fill(null);
   const str = 'A';
   const numberArr = emptyArr.map((_, i) => ({
     label: `选项 ${i + 1}`,
     value: `option_${i + 1}`,
+    disabled: i % 3 === 0 ? true : false,
   }));
 
   const numberArrA = emptyArr.map((_, i) => ({
@@ -68,10 +71,8 @@ export default function () {
   };
 
   const optionsT1 = buildTree(8);
-  console.log('optionsT1: ', optionsT1);
 
   const optionsT3 = buildTreeDepth3(6);
-  console.log('optionsT3: ', optionsT3);
 
   const [value1, setValue1] = useState('');
 
@@ -84,24 +85,88 @@ export default function () {
     }
   };
 
+  const optionsSingle = new Array(7).fill(null).map((_, i) => ({
+    label: i === 6 ? '禁用选项' : `选项${numToWord[i]}`,
+    value: `option_${i + 1}`,
+    disabled: i === 6 ? true : false,
+  }));
+
   return (
     <div className="tdesign-mobile-demo">
       <TDemoHeader
         title="DropdownMenu 下拉菜单"
         summary="菜单呈现数个并列的选项类目，用于整个页面的内容筛选，由菜单面板和菜单选项组成。"
       />
+      <TDemoBlock title="01 类型" summary="单选下拉菜单">
+        <DropdownMenu activeColor="#450">
+          <DropdownItem label="菜单" options={optionsSingle} onChange={onChange1} />
+          <DropdownItem label="菜单" options={optionsSingle} onChange={onChange1} />
+          <DropdownItem label="菜单" options={optionsSingle} onChange={onChange1} />
+          <DropdownItem label="两字菜单" options={optionsSingle} onChange={onChange1} />
+        </DropdownMenu>
+      </TDemoBlock>
+      <TDemoBlock title="" summary="多选下拉菜单">
+        <DropdownMenu activeColor="#450">
+          <DropdownItem label="单列多选" options={optionsSingle} onChange={onChange1} />
+          <DropdownItem label="双列多选" options={optionsSingle} onChange={onChange1} />
+          <DropdownItem label="最多四字菜单" options={optionsSingle} onChange={onChange1} />
+        </DropdownMenu>
+      </TDemoBlock>
+      <TDemoBlock title="02 状态" summary="下拉菜单状态">
+        <DropdownMenu activeColor="#450">
+          <DropdownItem label="禁用" disabled options={optionsSingle} onChange={onChange1} />
+          <DropdownItem label="禁用" disabled options={optionsSingle} onChange={onChange1} />
+          <DropdownItem label="禁用" disabled options={optionsSingle} onChange={onChange1} />
+          <DropdownItem label="禁用" disabled options={optionsSingle} onChange={onChange1} />
+        </DropdownMenu>
+      </TDemoBlock>
+      <div style={{ height: 16 }} />
+      <TDemoBlock title="" summary="">
+        <DropdownMenu activeColor="#450">
+          <DropdownItem label="禁用菜单" disabled options={optionsSingle} onChange={onChange1} />
+          <DropdownItem label="禁用菜单" disabled options={optionsSingle} onChange={onChange1} />
+          <DropdownItem label="禁用菜单" disabled options={optionsSingle} onChange={onChange1} />
+        </DropdownMenu>
+      </TDemoBlock>
+      <div style={{ height: 16 }} />
+      <TDemoBlock title="" summary="">
+        <DropdownMenu activeColor="#450">
+          <DropdownItem label="禁用菜单" disabled options={optionsSingle} onChange={onChange1} />
+          <DropdownItem label="禁用菜单" disabled options={optionsSingle} onChange={onChange1} />
+        </DropdownMenu>
+      </TDemoBlock>
+
+      <TDemoBlock title="" summary="树型下拉菜单">
+        <DropdownMenu activeColor="#450">
+          <DropdownItem
+            label="树型双列"
+            options={optionsT1}
+            optionsLayout="tree"
+            optionsColumns={2}
+            onChange={onChange1}
+          />
+          <DropdownItem
+            label="选项最多六字菜单"
+            options={optionsT3}
+            optionsLayout="tree"
+            optionsColumns={3}
+            onChange={onChange1}
+          />
+        </DropdownMenu>
+      </TDemoBlock>
+
+      <TDemoBlock title="" summary="树形单选多行下拉菜单">
+        <DropdownMenu activeColor="#450">
+          <DropdownItem label="菜单" options={numberArr} disabled onChange={onChange1} />
+          <DropdownItem label="菜单" options={optionsT1} optionsLayout="tree" optionsColumns={2} onChange={onChange1} />
+          <DropdownItem label="最多" options={optionsT3} optionsLayout="tree" optionsColumns={3} onChange={onChange1} />
+        </DropdownMenu>
+      </TDemoBlock>
       <TDemoBlock summary="单选单行下拉菜单">
         <DropdownMenu activeColor="#450">
           <DropdownItem label="菜单1" options={numberArr} defaultValue="option_3" onChange={onChange1} />
           <DropdownItem label="菜单1" options={numberArrA} value={value1} onChange={onChange1} />
           <DropdownItem label="最多1" options={numberArrB} onChange={onChange1} />
-        </DropdownMenu>
-      </TDemoBlock>
-      <TDemoBlock title="01 类型" summary="树形单选多行下拉菜单">
-        <DropdownMenu activeColor="#450">
-          <DropdownItem label="菜单" options={numberArr} onChange={onChange1} />
-          <DropdownItem label="菜单" options={optionsT1} optionsLayout="tree" optionsColumns={2} onChange={onChange1} />
-          <DropdownItem label="最多" options={optionsT3} optionsLayout="tree" optionsColumns={3} onChange={onChange1} />
         </DropdownMenu>
       </TDemoBlock>
       <TDemoBlock summary="多选多行下拉菜单">

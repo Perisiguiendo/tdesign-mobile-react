@@ -1,6 +1,7 @@
 import React, { memo, useMemo, useState, useCallback, useEffect } from 'react';
 import classnames from 'classnames';
 import { RadioGroup, Radio, Checkbox, Button } from 'tdesign-mobile-react';
+import useDefault from 'tdesign-mobile-react/_util/useDefault';
 import isArray from 'lodash/isArray';
 import isString from 'lodash/isString';
 import isNumber from 'lodash/isNumber';
@@ -28,6 +29,9 @@ const DropdownItem: React.FC<DropdownItemProps> = (props) => {
     clearIndex,
   } = props;
 
+  const [tempValue, setTempValue] = useDefault(value, defaultValue, onChange);
+  console.log('tempValue: ', tempValue);
+
   const [isTreeLayout] = useState(optionsLayout === 'tree');
 
   const { classPrefix } = useConfig();
@@ -53,16 +57,16 @@ const DropdownItem: React.FC<DropdownItemProps> = (props) => {
   );
 
   const defaultRadioValue = useMemo(() => {
-    if (!defaultValue) {
+    if (!tempValue) {
       return [];
     }
-    if (isArray(defaultValue)) {
-      return defaultValue;
+    if (isArray(tempValue)) {
+      return tempValue;
     }
-    if (isString(defaultValue) || isNumber(defaultValue)) {
-      return [defaultValue];
+    if (isString(tempValue) || isNumber(tempValue)) {
+      return [tempValue];
     }
-  }, [defaultValue]);
+  }, [tempValue]);
 
   const [tempRadioValue, setTempRadioValue] = useState<TdDropdownItemOptionValueType[]>(defaultRadioValue);
   const [tempCheckboxValue, setTempCheckboxValue] = useState<TdDropdownItemOptionValueType[]>(defaultRadioValue);
@@ -70,9 +74,10 @@ const DropdownItem: React.FC<DropdownItemProps> = (props) => {
   useEffect(() => {
     console.log('tempRadioValue', tempRadioValue);
     if (onChange) {
-      onChange(tempRadioValue);
+      onChange(tempRadioValue?.filter((v) => v));
     }
   }, [tempRadioValue]);
+  console.log('tempRadioValue: ', tempRadioValue);
 
   /**
    * 确定按钮disabled
@@ -163,21 +168,21 @@ const DropdownItem: React.FC<DropdownItemProps> = (props) => {
     [options, tempRadioValue, childLeafs, grandsonLeafs],
   );
 
-  const radioGroupContent = useCallback(
-    (index) => (
-      <RadioGroup
-        defaultValue={defaultValue as TdDropdownItemOptionValueType}
-        value={radioSingleValue(index)}
-        onChange={(value) => radioChange(value, index)}
-      >
-        {(radioContent(index) || []).map((item, index) => (
-          <div className={`${name}__cell`} key={index}>
-            <Radio value={item.value}>{item.label}</Radio>
-          </div>
-        ))}
-      </RadioGroup>
-    ),
-    [defaultValue, radioSingleValue, radioContent, name],
+  const radioGroupContent = (index) => (
+    <RadioGroup
+      defaultValue={defaultValue as TdDropdownItemOptionValueType}
+      value={radioSingleValue(index)}
+      onChange={(value) => radioChange(value, index)}
+      disabled={disabled}
+    >
+      {(radioContent(index) || []).map((item, index) => (
+        <div className={`${name}__cell`} key={index}>
+          <Radio value={item.value} disabled={item.disabled}>
+            {item.label}
+          </Radio>
+        </div>
+      ))}
+    </RadioGroup>
   );
   console.log('defaultValue: ', defaultValue);
 
@@ -186,10 +191,14 @@ const DropdownItem: React.FC<DropdownItemProps> = (props) => {
    * @description 多选内容节点
    */
   const checkboxContent = (
-    <Checkbox.Group defaultValue={tempCheckboxValue as TdDropdownItemOptionValueType[]} onChange={checkboxChange}>
+    <Checkbox.Group
+      disabled={disabled}
+      defaultValue={tempCheckboxValue as TdDropdownItemOptionValueType[]}
+      onChange={checkboxChange}
+    >
       {options.map((item, index) => (
         <div className={`${name}__cell`} key={index}>
-          <Checkbox value={item.value} label={item.label} />
+          <Checkbox {...item} value={item.value} disabled={item.disabled} label={item.label} />
         </div>
       ))}
     </Checkbox.Group>
