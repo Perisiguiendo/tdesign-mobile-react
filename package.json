@@ -116,7 +116,7 @@
     "find-node-modules": "^2.1.2",
     "gray-matter": "^4.0.3",
     "husky": "^7.0.4",
-    "inquirer": "^8.2.0",
+    "inquirer": "^9.1.4",
     "jest": "^27.5.1",
     "jest-html-reporter": "^3.4.2",
     "jest-transform-stub": "^2.0.0",
